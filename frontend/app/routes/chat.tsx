@@ -5,12 +5,27 @@ export default function Chat() {
   const [message, setMessage] = React.useState('');
   const [messages, setMessages] = React.useState<string[]>([]);
 
+  const handleResponse = async () => {
+    const res = await fetch('http://localhost:5000/ask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await res.json();
+    console.log(data);
+    setMessages((prevMessages) => [...prevMessages, data.answer]);
+  }
+
   const handleSendMessage = () => {
     if (message.trim()) {
       setMessages((prevMessages) => [...prevMessages, message]);
+      handleResponse();
       setMessage(''); // Clear input after sending the message
-    }
-  };
+      }
+    };
 
   return (
     <React.Fragment>

@@ -7,7 +7,7 @@ const openai = new OpenAI({
   apiKey: process.env.OpenAIAPIKey
 });
 
-async function submitRequest(question)  {
+async function submitRequest(message)  {
   // ChatGPT call structure with prompt
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
@@ -18,7 +18,7 @@ async function submitRequest(question)  {
       },
       {
         role: "user",
-        content: question,
+        content: message,
       },
     ],
     temperature: .3,

@@ -14,12 +14,12 @@ app.use(cors({
 
 
 app.post('/ask', async (req, res) => {
-    const { question } = req.body;
+    const { message } = req.body;
 
     try {
-      
+      response = await AIOrchestrator.submitRequest(message);
       // Sending the response back as JSON
-      res.status(200).json({ answer: AIOrchestrator.submitRequest(question) });
+      res.status(200).json({ answer: `${response}`} );
  
     } catch (error) {
       console.error('Error with OpenAI API:', error);
