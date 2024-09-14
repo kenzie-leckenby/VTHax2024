@@ -13,8 +13,15 @@ let thread;
 async function setup() {
   assistant = await openai.beta.assistants.create({
     name: "AI Dungeon Master",
-    description: "You are in charge of a table top role playing game, your job is to guide the game with the user's responses.",
-    instructions:  "The user is a male wizard named Earl",
+    description: "",
+    instructions:  "You are in charge of a table top role playing game, your job is to guide the game and properlly set the scene of what is currently hapenning in the game." +
+      "You have access to a vector search that contains the rules for the game you are running. The user is playing a character that is a Wizard named Earl.",
+    tools: [{ type: "file_search" }],
+    tool_resources: {
+      file_search: {
+        vector_store_ids: ["vs_i2QGTUjskhz5mIIeFfk2Z52B"]
+      }
+    },
     model: "gpt-3.5-turbo",
   });
   thread = await openai.beta.threads.create();
