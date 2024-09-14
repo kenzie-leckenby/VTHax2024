@@ -7,31 +7,51 @@ const openai = new OpenAI({
   apiKey: process.env.OpenAIAPIKey
 });
 
+
+let assistant;
+let thread;
+async function setup() {
+  assistant = await openai.beta.assistants.create({
+    name: "AI Dungeon Master",
+    description: "You are in charge of a table top role playing game, your job is to guide the game with the user's responses.",
+    instructions:  "The user is a male wizard named Earl",
+    model: "gpt-3.5-turbo",
+  });
+  thread = await openai.beta.threads.create();
+}
+
+setup();
+
 async function submitRequest(message)  {
   // ChatGPT call structure with prompt
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: "You are in charge of a table top role playing game, and the user is a male wizard name Earl. Your job is to guide the game with the user's responses.",
-      },
-      {
-        role: "user",
-        content: message,
-      },
-    ],
-    temperature: .3,
-    max_tokens: 1000,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-  });
 
-  // Extracting the response from OpenAI
-  const aiResponse = response.choices[0].message.content;
-  console.log(`AI Response: ${aiResponse}`);
-  return aiResponse;
+  const request = await openai.beta.threads.messages.create(
+    thread.id,
+    {
+      role: "user",
+      content: message
+    }
+  );
+
+  let run = await openai.beta.threads.runs.createAndPoll(
+    thread.id,
+    { 
+      assistant_id: assistant.id,
+    }
+  );
+
+  if (run.status === 'completed') {
+    const messages = await openai.beta.threads.messages.list(
+      run.thread_id
+    );
+    for (const interaction of messages.data.reverse()) {
+      console.log(`${interaction.role} > ${interaction.content[0].text.value}`);
+    }
+    messages.data.reverse();
+    return messages.data[0].content[0].text.value;
+  } else {
+    console.log(run.status);
+  }
 }
 
 module.exports = {
