@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div>
       <CssBaseline />
       <AppBar />
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
         {children}
       </Box>
