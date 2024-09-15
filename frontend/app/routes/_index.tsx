@@ -15,11 +15,12 @@ export const meta: MetaFunction = () => [
 export default function Index() {
   return (
     <React.Fragment>
-      <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-        AI Dungeon Master!
+      <Typography variant="h3" component="h1" sx={{ mb: 2 }}>
+        Welcome to AI Dungeon Master!
       </Typography>
-      <Typography variant='body1' sx={{ mb: 2}}>Go on an adventure lead by our AI Dungeon Master using your own character!</Typography>
+      <Typography variant='h6' sx={{ mb: 2}}>Go on an adventure lead by our innovation AI Dungeon Master using your very own character!</Typography>
       <Button variant="contained" to="/chat" component={RemixLink}>START ADVENTURE</Button>
+      <Button variant="contained" to="/newCharacter" component={RemixLink}>DEBUG CHARACTER CREATOR</Button>
     </React.Fragment>
   );
 }

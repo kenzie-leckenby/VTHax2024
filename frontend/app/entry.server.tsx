@@ -3,11 +3,9 @@ import * as ReactDOMServer from 'react-dom/server';
 import { RemixServer } from '@remix-run/react';
 import type { EntryContext } from '@remix-run/node';
 import createEmotionCache from './src/createEmotionCache';
-import theme from './src/theme';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
 import { CacheProvider } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
+import { ThemeProviderComponent } from './src/ThemeContext'; // Import your custom ThemeContext
 
 export default function handleRequest(
   request: Request,
@@ -21,16 +19,15 @@ export default function handleRequest(
   function MuiRemixServer() {
     return (
       <CacheProvider value={cache}>
-        <ThemeProvider theme={theme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
+        {/* Use your ThemeProviderComponent instead of the static ThemeProvider */}
+        <ThemeProviderComponent>
           <RemixServer context={remixContext} url={request.url} />
-        </ThemeProvider>
+        </ThemeProviderComponent>
       </CacheProvider>
     );
   }
 
-  // Render the component to a string.
+  // Render the component to a string
   const html = ReactDOMServer.renderToString(<MuiRemixServer />);
 
   // Grab the CSS from emotion

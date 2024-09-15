@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
+import { grey } from '@mui/material/colors';
 
 export default function Chat() {
   const [message, setMessage] = React.useState('');
@@ -53,16 +54,15 @@ export default function Chat() {
         {/* Chat Window */}
         <Paper
           elevation={3}
-          sx={(theme) => ({
+          sx={{
             flexGrow: 1,
             overflowY: 'auto', // Ensure vertical scrolling
             padding: 2,
-            backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : '#f5f5f5',
             display: 'flex',
             flexDirection: 'column',
             height: '100%', // Use full remaining height
             maxHeight: '100%', // Ensure that overflow is handled
-          })}
+          }}
         >
           {/* Display Messages with Scrollable Box */}
           <Box sx={{ flexGrow: 1, overflowY: 'auto', maxHeight: '100%' }}>
@@ -81,12 +81,8 @@ export default function Chat() {
                   sx={(theme) => ({
                     padding: 2,
                     borderRadius: 2,
-                    backgroundColor: msg.sender === 'user'
-                      ? (theme.palette.mode === 'dark' ? '#0056b3' : 'primary.main') // Dark blue color for dark mode
-                      : 'background.paper',
-                    color: msg.sender === 'user'
-                      ? (theme.palette.mode === 'dark' ? 'text.primary' : 'white')
-                      : 'text.primary',
+                    backgroundColor: msg.sender === 'user' ? 'primary.main' : (theme.palette.mode === 'dark' ? 'background.paper' : grey[300]),
+                    color: 'text.primary',
                     maxWidth: '80%', // Limit width of message box
                   })}
                 >
@@ -122,7 +118,10 @@ export default function Chat() {
             variant="contained"
             color="primary"
             onClick={handleSendMessage}
-            sx={{ ml: 2 }}
+            sx={{ 
+                ml: 2,
+                color: 'text.primary'
+             }}
           >
             Send
           </Button>
