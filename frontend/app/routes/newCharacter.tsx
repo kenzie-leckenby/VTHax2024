@@ -51,6 +51,7 @@ export default function NewCharacter() {
     };
     setRollingAbilities(newAbilities);
     setShowAbilities(true);
+    setCharacterData(prev => ({ ...prev, abilities: newAbilities }));
     setShowRace(true); // Show race dropdown after rolling abilities
   };
 
@@ -100,9 +101,18 @@ export default function NewCharacter() {
     setCharacterData(prev => ({ ...prev, name: event.target.value }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('Character data saved:', characterData);
-    // You can implement the save logic here, such as saving to a backend or local storage
+    const res = await fetch('http://localhost:5000/storeCharacterData', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ characterData })
+    });
+
+    const response = await res.json();
+    console.log(response);
   };
 
   const dwarfDisabled = rollingAbilities

@@ -9,6 +9,18 @@ export default function Chat() {
 
   const messagesEndRef = React.useRef<null | HTMLDivElement>(null);
 
+  const getCharacterData = async () => {
+    const res = await fetch('http://localhost:5000/getCharacterData', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    const data = await res.json();
+    console.log(data);
+  };
+
   const handleResponse = async () => {
     const res = await fetch('http://localhost:5000/ask', {
       method: 'POST',
