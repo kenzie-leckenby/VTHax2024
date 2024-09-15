@@ -185,7 +185,7 @@ export default function NewCharacter() {
                     ml: 2 // Optional: margin to separate from abilities
                   }}
                 >
-                  Roll Abilities
+                  Re-Roll Abilities
                 </Button>
               </Box>
             )}
@@ -268,7 +268,7 @@ export default function NewCharacter() {
                     ml: 2 
                   }}
                 >
-                  Roll Hit Points
+                  Re-Roll Hit Points
                 </Button>
               </Box>
             )}
@@ -292,7 +292,7 @@ export default function NewCharacter() {
                     ml: 2 
                   }}
                 >
-                  Roll Gold
+                  Re-Roll Gold
                 </Button>
               </Box>
             )}
