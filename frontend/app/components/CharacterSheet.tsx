@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Paper } from '@mui/material';
 
 type CharacterSheetProps = {
   name: string;
@@ -26,53 +26,66 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   const secondColumnAbilities = abilityEntries.slice(half);
 
   return (
-    <Box
+    <Paper 
+      elevation = {3}
       sx={{
+        flexGrow: 1,
+        overflowY: 'auto',
         padding: 2,
         display: 'flex',
         flexDirection: 'column',
-        width: '300px', // Adjust as needed
+        height: '100%',
+        maxHeight: '100%',
       }}
     >
-      {/* Character Name */}
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        {name}
-      </Typography>
-
-      {/* Race, Class, and Level */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">
-          {race} {className}
+      <Box
+        sx={{
+          padding: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          width: '300px', // Adjust as needed
+        }}
+      >
+        {/* Character Name */}
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          {name}
         </Typography>
-        <Typography variant="h6">
-          Level {level}
-        </Typography>
-      </Box>
 
-      {/* Abilities in Two Columns */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Box>
-          {firstColumnAbilities.map(([ability, score]) => (
-            <Typography key={ability}>
-              {ability}: {score}
-            </Typography>
-          ))}
+        {/* Race, Class, and Level */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6">
+            {race} {className}
+          </Typography>
+          <Typography variant="h6">
+            Level {level}
+          </Typography>
         </Box>
-        <Box>
-          {secondColumnAbilities.map(([ability, score]) => (
-            <Typography key={ability}>
-              {ability}: {score}
-            </Typography>
-          ))}
-        </Box>
-      </Box>
 
-      {/* Hit Points and Gold */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">Hit Points: {hitPoints}</Typography>
-        <Typography variant="h6">Gold: {gold}</Typography>
+        {/* Abilities in Two Columns */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Box>
+            {firstColumnAbilities.map(([ability, score]) => (
+              <Typography key={ability}>
+                {ability}: {score}
+              </Typography>
+            ))}
+          </Box>
+          <Box>
+            {secondColumnAbilities.map(([ability, score]) => (
+              <Typography key={ability}>
+                {ability}: {score}
+              </Typography>
+            ))}
+          </Box>
+        </Box>
+
+        {/* Hit Points and Gold */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6">Hit Points: {hitPoints}</Typography>
+          <Typography variant="h6">Gold: {gold}</Typography>
+        </Box>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

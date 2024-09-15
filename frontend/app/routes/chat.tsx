@@ -79,7 +79,6 @@ export default function Chat() {
       <Container
         sx={{
           width: '100%',
-          maxWidth: '1200px',
           height: 'calc(100vh - 128px)',
           display: 'flex',
           flexDirection: 'row',
@@ -186,8 +185,10 @@ export default function Chat() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: 2,
+            padding: 0,
+            paddingLeft: 4,
             height: '100%',
+            margin: '0 0 0 0',
           }}
         >
           <CharacterSheet

@@ -194,7 +194,7 @@ export default function NewCharacter() {
               </Box>
             )}
             {(dwarfDisabled || elfDisabled || halflingDisabled) && showRace && (
-              <Alert severity='info'>One or more classes have been disabled based on rolled ability points.</Alert>
+              <Alert severity='info'>One or more races have been disabled based on rolled ability points.</Alert>
             )}
             {showRace && (
               <FormControl fullWidth sx={{ mt: 2, marginBottom: '16px'}}>
