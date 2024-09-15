@@ -32,6 +32,24 @@ async function setup() {
 
 setup();
 
+
+async function checkStatus(run) {
+  if (run.status === 'completed') {
+    const messages = await openai.beta.threads.messages.list(
+      run.thread_id
+    );
+    for (const interaction of messages.data.reverse()) {
+      console.log(`${interaction.role} > ${interaction.content[0].text.value}`);
+    }
+    messages.data.reverse();
+    return messages.data[0].content[0].text.value;
+  } else if (run.required_action && run.required_action.submit_tool_outputs && run.required_action.submit_tool_outputs.tool_calls) {
+    return "{{TOOL}}<<" + run.required_action.submit_tool_outputs.tool_calls[0].function.name + ">>";
+  } else {
+    console.log(run.status);
+  }
+}
+
 async function submitRequest(message)  {
   // ChatGPT call structure with prompt
 
@@ -49,64 +67,54 @@ async function submitRequest(message)  {
       assistant_id: assistant.id,
     }
   );
-
-  if (run.status === 'completed') {
-    const messages = await openai.beta.threads.messages.list(
-      run.thread_id
-    );
-    for (const interaction of messages.data.reverse()) {
-      console.log(`${interaction.role} > ${interaction.content[0].text.value}`);
-    }
-    messages.data.reverse();
-    return messages.data[0].content[0].text.value;
-  } else if (run.required_action && run.required_action.submit_tool_outputs && run.required_action.submit_tool_outputs.tool_calls) {
-    return "{{TOOL}}<<" + run.required_action.submit_tool_outputs.tool_calls[0].function.name + ">>";
-  } else {
-    console.log(run.status);
-  }
+  return checkStatus(run);
 }
 
 async function submit_tool_outputs(input) {
   
-  let run = await openai.beta.threads.runs.createAndPoll(
+  const runs = await openai.beta.threads.runs.list(
     thread.id,
-    { 
-      assistant_id: assistant.id,
-    }
   );
+
+  let run = await openai.beta.threads.runs.retrieve(
+    thread.id,
+    runs.data[0].id
+  )
 
   const toolOutputs = run.required_action.submit_tool_outputs.tool_calls.map(
     (tool) => {  
+      console.log(tool.function.name);
       switch (tool.function.name) {
         case "RollStrength":
-          console.log("assistant > RollStrength");
-          return "<<ROLL STRENGTH>>"
-          break;
         case "RollDexterity":
-          console.log("assistant > RollDexterity");
-          return "<<ROLL DEXTERITY>>";
-          break;
         case "RollIntelligence":
-          console.log("assistant > RollIntelligence");
-          return "<<ROLL INTELLIGENCE>>";
-          break;
         case "RollWisdom":
-          console.log("assistant > RollWisdom");
-          return "<<ROLL WISDOM>>";
-          break;
         case "RollCharisma":
-          console.log("assistant > RollCharisma");
-          return "<<ROLL CHARISMA>>";
-          break;
         case "RollConstitution":
-          console.log("assistant > RollConstitution");
-          return "<<ROLL CONSTITUTION>>";
+          console.log("assistant > " + tool.function.name);
+          return {
+            tool_call_id: tool.id,
+            output: input
+          }
           break;
         default:
           console.log("assistant > Invalid Tool");
           break;
       }
     });
+
+  if (toolOutputs.length > 0) {
+    run = await openai.beta.threads.runs.submitToolOutputsAndPoll(
+      thread.id,
+      run.id,
+      { tool_outputs: toolOutputs },
+    );
+    console.log("Tool outputs submitted successfully.");
+  } else {
+    console.log("No tool outputs to submit.");
+  } 
+
+  return checkStatus(run);
 }
 
 module.exports = {

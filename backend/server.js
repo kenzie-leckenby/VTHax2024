@@ -13,18 +13,14 @@ app.use(cors({
     origin: 'http://localhost:3000'
   }));
 
+// Used to prompt the AI model directly
 app.post('/ask', async (req, res) => {
     const { message } = req.body;
 
     try {
       response = await AIOrchestrator.submitRequest(message);
       // Sending the response back as JSON
-
-      if (response.includes("{{TOOL}}")) {
-        res.status(200).json({ answer: `${response}`.replace("{{TOOL}}", "")})
-      } else {
-        res.status(200).json({ answer: `${response}`} );
-      }      
+      res.status(200).json({ answer: `${response}`} );    
  
     } catch (error) {
       console.error('Error with OpenAI API:', error);
@@ -32,31 +28,33 @@ app.post('/ask', async (req, res) => {
     }
 });
 
+// Used to give a resposne to a function call from the AI model
 app.post('/respond', async (req, res) => {
-  const { message } = req.body;
-
+  const { value } = req.body;
+  console.log(value);
   try {
-    response = await AIOrchestrator.submit_tool_outputs(message)
-
+    response = await AIOrchestrator.submit_tool_outputs(value.toString())
+    res.status(200).json({answer: `${response}`})
   } catch (error) {
       console.error('Error with OpenAI API:', error);
       res.status(500).json({ error: 'Something went wrong with OpenAI API.' });
     }
 });
 
+// Used to store character data
 app.post('/storeCharacterData', async (req, res) => {
     fs.writeFile("./character_sheets/currentUser.json", JSON.stringify(req.body), (error, result) => {
       if (error) {
         console.error("Unable to write Character Data.", error)
         res.status(500).json({error: "Cannot store data!"});
       } else {
-        console.log("data stored");
         res.status(200);
       }
     })
   
 });
 
+// Used to retrieve character data
 app.get('/getCharacterData', async (req, res) => {
   fs.readFile("./character_sheets/currentUser.json", "utf8", (error, data) => {
     if (error) {

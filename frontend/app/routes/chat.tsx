@@ -4,11 +4,32 @@ import SendIcon from '@mui/icons-material/Send';
 import { grey } from '@mui/material/colors';
 import CharacterSheet from '~/components/CharacterSheet';
 
+type AbilityScores = {
+  STR: number;
+  INT: number;
+  WIS: number;
+  DEX: number;
+  CON: number;
+  CHA: number;
+};
+
+type CharacterData = {
+  name: string;
+  abilities?: AbilityScores;
+  race?: string;
+  class?: string;
+  spell?: string;
+  hitPoints?: number;
+  gold?: number;
+  level?: number;
+};
 export default function Chat() {
   const [message, setMessage] = React.useState('');
   const [messages, setMessages] = React.useState<{ text: string; sender: 'user' | 'ai' }[]>([]);
-  const [characterData, setCharacterData] = React.useState<any>(null); // Adjust type if needed
   const [isD20Mode, setIsD20Mode] = React.useState(false); // State to toggle between text field and button
+  const [isLoading, setIsLoading] = React.useState(false); // potential loading state for better ux
+  const [activeAbiity, setActiveAbility] = React.useState('');
+  const [characterData, setCharacterData] = React.useState<CharacterData>({ name: '' });
 
   const messagesEndRef = React.useRef<null | HTMLDivElement>(null);
 
@@ -24,7 +45,54 @@ export default function Chat() {
     setCharacterData(data.characterData);
   };
 
-  const handleResponse = async () => {
+    getCharacterData();
+
+  const getModifier = (modifierType: string): number => {
+    if (characterData.abilities != undefined){
+      let val;
+      switch (modifierType) {
+        case "Strength":
+          val = characterData.abilities.STR;
+          break;
+        case "Desterity":
+          val = characterData.abilities.DEX;
+          break;
+        case "Intelligence":
+          val = characterData.abilities.INT;
+          break;
+        case "Wisdom":
+          val = characterData.abilities.WIS;
+          break;
+        case "Charisma":
+          val = characterData.abilities.CHA;
+          break;
+        case "Constitution":
+          val = characterData.abilities.CON;
+          break;
+        default:
+          return 0;
+      }
+      
+      if(val <= 3) {
+        return -3;
+      } else if (val <= 5) {
+        return -2;
+      } else if (val <= 8) {
+        return -1;
+      } else if (val <= 12) {
+        return 0;
+      } else if (val <= 15) {
+        return 1;
+      } else if (val <= 17) {
+        return 2;
+      } else {
+        return 3;
+      }
+    }
+  
+  }
+
+  const askAI = async () => {
     const res = await fetch('http://localhost:5000/ask', {
       method: 'POST',
       headers: {
@@ -34,21 +102,44 @@ export default function Chat() {
     });
 
     const data = await res.json();
-    console.log(data);
-    setMessages((prevMessages) => [...prevMessages, { text: data.answer, sender: 'ai' }]);
+    if ((data.answer).includes("{{TOOL}}")) {
+      // uts in a state for the D20 to be rolled, so that the button handles the rest of the progression.
+      setIsD20Mode(true);
+      const ability: string = (data.answer).substring((data.answer).indexOf("Roll") + 4, (data.answer).indexOf(">>"))
+      setActiveAbility(ability);
+    
+    } else {
+      setMessages((prevMessages) => [...prevMessages, { text: data.answer, sender: 'ai' }]);
+    }
   };
 
   const handleSendMessage = () => {
     if (message.trim()) {
       setMessages((prevMessages) => [...prevMessages, { text: message, sender: 'user' }]);
-      handleResponse();
+      askAI();
       setMessage(''); // Clear input after sending the message
     }
   };
 
-  const handleRollD20 = () => {
+  const handleRollD20 = async () => {
     // Handle the Roll D20 button click
-    console.log("Roll D20 clicked");
+    
+    const value = Math.floor(Math.random() * 20) + 1 + getModifier(activeAbiity);;
+    
+    setMessages((prevMessages) => [...prevMessages, { text: "You Rolled: " + value.toString() , sender: 'ai' }]);
+
+    const res = await fetch('http://localhost:5000/respond', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ value }),
+    })
+  
+    const data = await res.json();
+
+    setMessages((prevMessages) => [...prevMessages, { text: data.answer, sender: 'ai' }]);
+    setIsD20Mode(false);
   };
 
   const scrollToBottom = () => {
@@ -152,7 +243,7 @@ export default function Chat() {
                 onClick={handleRollD20}
                 sx={{ width: '100%' }} // Ensure button occupies full width
               >
-                Roll D20
+                Roll D20 {activeAbiity} Check
               </Button>
             ) : (
               <TextField
@@ -191,13 +282,13 @@ export default function Chat() {
           }}
         >
           <CharacterSheet
-            name={currentCharacterData.name}
-            race={currentCharacterData.race}
-            className={currentCharacterData.className}
-            level={currentCharacterData.level}
-            abilities={currentCharacterData.abilities}
-            hitPoints={currentCharacterData.hitPoints}
-            gold={currentCharacterData.gold}
+            name={currentCharacterData.name || "John Doe"}
+            race={currentCharacterData.race || "NONE"}
+            className={currentCharacterData.class || "NONE"}
+            level={currentCharacterData.level || 0}
+            abilities={currentCharacterData.abilities || {NONE: 0}}
+            hitPoints={currentCharacterData.hitPoints || 0}
+            gold={currentCharacterData.gold || 0}
           />
         </Box>
       </Container>
