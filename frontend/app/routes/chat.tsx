@@ -6,8 +6,21 @@ import { grey } from '@mui/material/colors';
 export default function Chat() {
   const [message, setMessage] = React.useState('');
   const [messages, setMessages] = React.useState<{ text: string; sender: 'user' | 'ai' }[]>([]);
+  const [characterData, setCharacterData] = React.useState('');
 
   const messagesEndRef = React.useRef<null | HTMLDivElement>(null);
+
+  const getCharacterData = async () => {
+    const res = await fetch('http://localhost:5000/getCharacterData', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    const data = await res.json();
+    setCharacterData(data.characterData);
+  };
 
   const handleResponse = async () => {
     const res = await fetch('http://localhost:5000/ask', {
