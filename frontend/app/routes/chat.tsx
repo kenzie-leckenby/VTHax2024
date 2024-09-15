@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, TextField, Typography, Container, Paper, InputAdornment, IconButton } from '@mui/material';
+import { Box, Button, TextField, Typography, Container, Paper, InputAdornment, IconButton, LinearProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { grey } from '@mui/material/colors';
 import CharacterSheet from '~/components/CharacterSheet';
@@ -93,6 +93,7 @@ export default function Chat() {
   }
 
   const askAI = async () => {
+    setIsLoading(true);
     const res = await fetch('http://localhost:5000/ask', {
       method: 'POST',
       headers: {
@@ -102,6 +103,7 @@ export default function Chat() {
     });
 
     const data = await res.json();
+    setIsLoading(false);
     if ((data.answer).includes("{{TOOL}}")) {
       // uts in a state for the D20 to be rolled, so that the button handles the rest of the progression.
       setIsD20Mode(true);
@@ -213,7 +215,7 @@ export default function Chat() {
                     sx={(theme) => ({
                       padding: 2,
                       borderRadius: 2,
-                      backgroundColor: msg.sender === 'user' ? 'primary.main' : (theme.palette.mode === 'dark' ? 'background.paper' : grey[300]),
+                      backgroundColor: msg.sender === 'user' ? 'primary.main' : (theme.palette.mode === 'dark' ? 'background.paper' : grey[200]),
                       color: 'text.primary',
                       maxWidth: '80%',
                     })}
@@ -230,11 +232,22 @@ export default function Chat() {
           <Box
             sx={{
               display: 'flex',
+              flexDirection: 'column',
               mt: 2,
               alignItems: 'center',
-              paddingBottom: 2,
             }}
           >
+            <Box
+              sx={{
+                paddingBottom: 2,
+                width: '100%'
+              }}
+            >
+              {isLoading && (
+                <LinearProgress />
+              )}
+            </Box>
+
             {isD20Mode ? (
               <Button
                 variant="contained"
@@ -244,6 +257,7 @@ export default function Chat() {
                 Roll D20 {activeAbiity} Check
               </Button>
             ) : (
+              
               <TextField
                 label="Type your message..."
                 variant="outlined"
