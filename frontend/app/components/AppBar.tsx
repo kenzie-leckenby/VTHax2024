@@ -34,7 +34,12 @@ function ResponsiveAppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <svg width="33" height="41" viewBox="0 0 33 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 17L15 10L29 17V32L15 40L1 32V17Z" fill="#D9D9D9"/>
+            <path d="M15 10L1 17M15 10L29 17M15 10L25 19M15 10L5 19M1 17V32M1 17L5 19M1 32L15 40M1 32L15 35M1 32L5 19M15 40L29 32M15 40V35M29 32V17M29 32L15 35M29 32L25 19M29 17L25 19M15 35L5 19M15 35L25 19M5 19H25" stroke="black"/>
+            <path d="M30 11C27.6667 11 22.6 9.8 21 5L23 11H30Z" fill="#D9D9D9"/>
+            <path d="M23 14V11M23 11H30C27.6667 11 22.6 9.8 21 5L23 11ZM24.5 9L27 6M26 3C29.2 3 30 5.66667 30 7M26 1C30.8 1 32 5 32 7" stroke="black"/>
+            </svg>
             <Typography
               variant="h6"
               noWrap
@@ -52,7 +57,6 @@ function ResponsiveAppBar() {
             >
               IntelliQuest
             </Typography>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
             <Typography
               variant="h5"
               noWrap
@@ -68,7 +72,7 @@ function ResponsiveAppBar() {
                 textDecoration: 'none',
               }}
             >
-              LOGO
+              IntelliQuest
             </Typography>
           </Box>
 

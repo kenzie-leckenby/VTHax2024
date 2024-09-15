@@ -7,8 +7,8 @@ import { Button } from '@mui/material';
 
 // https://remix.run/docs/en/main/route/meta
 export const meta: MetaFunction = () => [
-  { title: 'Remix Starter' },
-  { name: 'description', content: 'Welcome to remix!' },
+  { title: 'IntelliQuest' },
+  { name: 'description', content: 'Welcome to IntelliQuest!' },
 ];
 
 // https://remix.run/docs/en/main/file-conventions/routes#basic-routes
@@ -21,6 +21,7 @@ export default function Index() {
       <Typography variant='h6' sx={{ mb: 2}}>Go on an adventure lead by our innovation AI Dungeon Master using your very own character!</Typography>
       <Button variant="contained" to="/chat" component={RemixLink}>START ADVENTURE</Button>
       <Button variant="contained" to="/newCharacter" component={RemixLink}>DEBUG CHARACTER CREATOR</Button>
+      <Button variant="contained" to="/signIn" component={RemixLink}>FUNNY SIGN IN BUTTON</Button>
     </React.Fragment>
   );
 }

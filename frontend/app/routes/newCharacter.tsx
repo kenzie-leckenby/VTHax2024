@@ -56,7 +56,6 @@ export default function NewCharacter() {
   const handleRaceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedRace = event.target.value as string;
     setCharacterData(prev => ({ ...prev, race: selectedRace }));
-    console.log("RACE CHANGE TIME")
     if (selectedRace === 'Dwarf') {
       setClasses(['Cleric', 'Thief', 'Fighter']);
     } else if (selectedRace === 'Halfling') {
@@ -98,6 +97,11 @@ export default function NewCharacter() {
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCharacterData(prev => ({ ...prev, name: event.target.value }));
+  };
+
+  const handleSave = () => {
+    console.log('Character data saved:', characterData);
+    // You can implement the save logic here, such as saving to a backend or local storage
   };
 
   const dwarfDisabled = rollingAbilities
@@ -142,26 +146,26 @@ export default function NewCharacter() {
 
           {showRace && (
             <FormControl fullWidth sx={{ mt: 2 }}>
-                <InputLabel>Race</InputLabel>
-                <Select
+              <InputLabel>Race</InputLabel>
+              <Select
                 value={characterData.race || ''}
                 onChange={handleRaceChange}
                 label="Race"
-                >
+              >
                 {races.map(race => (
-                    <MenuItem
-                        key={race}
-                        value={race}
-                        disabled={
-                        (race === 'Dwarf' && dwarfDisabled) ||
-                        (race === 'Elf' && elfDisabled) ||
-                        (race === 'Halfling' && halflingDisabled)
-                        }
-                    >
-                        {race}
-                    </MenuItem>
+                  <MenuItem
+                    key={race}
+                    value={race}
+                    disabled={
+                      (race === 'Dwarf' && dwarfDisabled) ||
+                      (race === 'Elf' && elfDisabled) ||
+                      (race === 'Halfling' && halflingDisabled)
+                    }
+                  >
+                    {race}
+                  </MenuItem>
                 ))}
-                </Select>
+              </Select>
             </FormControl>
           )}
         
@@ -221,6 +225,18 @@ export default function NewCharacter() {
             <Typography variant="h6" sx={{ mt: 2 }}>
               Initial Gold: {characterData.gold}
             </Typography>
+          )}
+
+          {/* Save Button */}
+          {characterData.gold !== undefined && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSave}
+              sx={{ mt: 3 }}
+            >
+              Save Character
+            </Button>
           )}
         </>
       )}
