@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <ThemeProviderComponent>
       <div>
         <AppBar/>
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
           <Box sx={{ my: 4 }}>
             {children}
           </Box>
