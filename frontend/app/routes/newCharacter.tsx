@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link as RemixLink } from '@remix-run/react';
 import {
-  Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip, Paper
+  Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip, Paper, Alert
 } from '@mui/material';
 
 type AbilityScores = {
@@ -15,6 +15,7 @@ type AbilityScores = {
 
 type CharacterData = {
   name: string;
+  experience?: number;
   abilities?: AbilityScores;
   race?: string;
   class?: string;
@@ -56,6 +57,7 @@ export default function NewCharacter() {
     setAbilitiesRolled(true);
     setShowAbilities(true);
     setCharacterData(prev => ({ ...prev, abilities: newAbilities }));
+    setCharacterData(prev => ({ ...prev, experience: 0}));
     setShowRace(true); // Show race dropdown after rolling abilities
   };
 
@@ -133,6 +135,8 @@ export default function NewCharacter() {
     ? rollingAbilities.DEX <= 9 || rollingAbilities.STR > 17
     : true;
 
+  
+
   return (
     <Container>
       <Paper
@@ -168,7 +172,7 @@ export default function NewCharacter() {
             )}
 
             {showAbilities && rollingAbilities && (
-              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant="h6">Abilities:</Typography>
                   <Box sx={{ display: 'flex', gap: 2, ml: 2 }}>
@@ -189,9 +193,11 @@ export default function NewCharacter() {
                 </Button>
               </Box>
             )}
-
+            {(dwarfDisabled || elfDisabled || halflingDisabled) && showRace && (
+              <Alert severity='info'>One or more classes have been disabled based on rolled ability points.</Alert>
+            )}
             {showRace && (
-              <FormControl fullWidth sx={{ mt: 2 }}>
+              <FormControl fullWidth sx={{ mt: 2, marginBottom: '16px'}}>
                 <InputLabel>Race</InputLabel>
                 <Select
                   value={characterData.race || ''}
@@ -213,6 +219,10 @@ export default function NewCharacter() {
                   ))}
                 </Select>
               </FormControl>
+            )}
+
+            {(characterData.race === 'Halfing' || characterData.race === 'Dwarf') && showClass && (
+              <Alert severity='info'>A class has been hidden based on your race.</Alert>
             )}
           
             {showClass && (
