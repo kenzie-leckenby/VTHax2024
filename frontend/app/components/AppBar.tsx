@@ -9,17 +9,17 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useThemeContext } from '../src/ThemeContext'; // Adjust the path as needed
-import { Link } from '@remix-run/react';
+import { Link, useNavigate } from '@remix-run/react'; // Import useNavigate
 
-const settings = ['Account', 'Logout'];
+const settings = ['Account', 'Login'];
 
 function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const { darkMode, toggleTheme } = useThemeContext();
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -29,8 +29,18 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleMenuItemClick = (setting: string) => {
+    if (setting === 'Login') {
+      navigate('/signIn'); // Redirect to /signIn
+    }
+    handleCloseUserMenu();
+  };
+
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{
+      backgroundColor: 'background.paper',
+      color: 'text.primary'
+      }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -102,7 +112,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => handleMenuItemClick(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
@@ -115,5 +125,6 @@ function ResponsiveAppBar() {
 }
 
 export default ResponsiveAppBar;
+
 
 

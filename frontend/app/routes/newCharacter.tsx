@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link as RemixLink } from '@remix-run/react';
 import {
   Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip
 } from '@mui/material';
@@ -232,10 +233,12 @@ export default function NewCharacter() {
             <Button
               variant="contained"
               color="primary"
+              to="/chat"
+              component={RemixLink}
               onClick={handleSave}
               sx={{ mt: 3 }}
             >
-              Save Character
+              Save and Begin
             </Button>
           )}
         </>

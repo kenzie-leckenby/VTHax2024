@@ -21,14 +21,14 @@ export const ThemeProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
     palette: {
       mode: darkMode ? 'dark' : 'light',
       primary: {
-        main: darkMode ? teal[600] : teal[500], // Lighter blue for dark mode, darker blue for light mode
+        main: darkMode ? teal[600] : teal[300], // Lighter blue for dark mode, darker blue for light mode
       },
       secondary: {
         main: darkMode ? lightGreen[300] : lightGreen[300], // Different shades of green
       },
       background: {
-        default: darkMode ? blueGrey[900] : blueGrey[50], // Dark background for dark mode
-        paper: darkMode ? blueGrey[800] : blueGrey[100], // Paper background color
+        default: darkMode ? blueGrey[900] : grey[200], // Dark background for dark mode
+        paper: darkMode ? blueGrey[800] : grey[300], // Paper background color
       },
       text: {
         primary: darkMode ? '#ffffff' : '#000000', // White text in dark mode, black in light mode

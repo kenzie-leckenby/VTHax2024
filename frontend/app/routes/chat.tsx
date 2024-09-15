@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
+import { Box, Button, TextField, Typography, Container, Paper, InputAdornment, IconButton } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 import { grey } from '@mui/material/colors';
 
 export default function Chat() {
@@ -113,23 +114,22 @@ export default function Chat() {
               if (e.key === 'Enter') handleSendMessage(); // Send message on pressing Enter
             }}
             autoComplete="off"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSendMessage} edge="end">
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSendMessage}
-            sx={{ 
-                ml: 2,
-                color: 'text.primary'
-             }}
-          >
-            Send
-          </Button>
         </Box>
       </Container>
     </React.Fragment>
   );
 }
+
 
 
 
