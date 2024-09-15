@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  Box, Button, TextField, Typography, Container, Paper, FormControl, InputLabel, Select, MenuItem
+  Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip
 } from '@mui/material';
 
 type AbilityScores = {
@@ -52,19 +52,31 @@ export default function NewCharacter() {
     setShowAbilities(true);
     setShowRace(true); // Show race dropdown after rolling abilities
   };
-  
+
   const handleRaceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCharacterData(prev => ({ ...prev, race: event.target.value as string }));
+    const selectedRace = event.target.value as string;
+    setCharacterData(prev => ({ ...prev, race: selectedRace }));
+    console.log("RACE CHANGE TIME")
+    if (selectedRace === 'Dwarf') {
+      setClasses(['Cleric', 'Thief', 'Fighter']);
+    } else if (selectedRace === 'Halfling') {
+      setClasses(['Cleric', 'Fighter', 'Thief']);
+    } else {
+      setClasses(['Cleric', 'Fighter', 'Magic-User', 'Thief']); // Restore all classes for non-Dwarf and non-Halfling races
+    }
+
     setShowClass(true); // Show class dropdown after selecting a race
   };
 
   const handleClassChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const selectedClass = event.target.value as string;
     setCharacterData(prev => ({ ...prev, class: selectedClass }));
+    
     if (selectedClass === 'Magic-User') {
-      setShowSpell(true); // Show spell dropdown if class is Mage
+      setShowSpell(true); // Show spell dropdown if class is Magic-User
     } else {
-        setShowHitPoints(true); // Show hitpoints roll button after selecting a class
+      setShowSpell(false); // Hide spell dropdown if class is not Magic-User
+      setShowHitPoints(true); // Show hitpoints roll button after selecting a class
     }
   };
 
@@ -87,6 +99,18 @@ export default function NewCharacter() {
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCharacterData(prev => ({ ...prev, name: event.target.value }));
   };
+
+  const dwarfDisabled = rollingAbilities
+    ? rollingAbilities.CON <= 9 || rollingAbilities.CHA > 17
+    : true;
+
+  const elfDisabled = rollingAbilities
+    ? rollingAbilities.INT <= 9 || rollingAbilities.CON > 17
+    : true;
+
+  const halflingDisabled = rollingAbilities
+    ? rollingAbilities.DEX <= 9 || rollingAbilities.STR > 17
+    : true;
 
   return (
     <Container>
@@ -118,21 +142,29 @@ export default function NewCharacter() {
 
           {showRace && (
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Race</InputLabel>
-              <Select
+                <InputLabel>Race</InputLabel>
+                <Select
                 value={characterData.race || ''}
                 onChange={handleRaceChange}
                 label="Race"
-              >
+                >
                 {races.map(race => (
-                  <MenuItem key={race} value={race}>
-                    {race}
-                  </MenuItem>
+                    <MenuItem
+                        key={race}
+                        value={race}
+                        disabled={
+                        (race === 'Dwarf' && dwarfDisabled) ||
+                        (race === 'Elf' && elfDisabled) ||
+                        (race === 'Halfling' && halflingDisabled)
+                        }
+                    >
+                        {race}
+                    </MenuItem>
                 ))}
-              </Select>
+                </Select>
             </FormControl>
           )}
-
+        
           {showClass && (
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Class</InputLabel>
@@ -150,7 +182,7 @@ export default function NewCharacter() {
             </FormControl>
           )}
 
-          {showSpell && characterData.class === 'Mage' && (
+          {showSpell && characterData.class === 'Magic-User' && (
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Spell</InputLabel>
               <Select
@@ -195,6 +227,9 @@ export default function NewCharacter() {
     </Container>
   );
 }
+
+
+
 
 
 
