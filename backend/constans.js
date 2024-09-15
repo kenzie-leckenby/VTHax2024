@@ -1,9 +1,6 @@
 
 const tools = [
   {
-    type: "file_search"
-  },
-  {
     type: "function",
     function: {
       name: "RollStrength",

@@ -16,9 +16,9 @@ export default function Index() {
   return (
     <React.Fragment>
       <Typography variant="h3" component="h1" sx={{ mb: 2 }}>
-        Welcome to AI Dungeon Master!
+        Welcome to IntelliQuest!
       </Typography>
-      <Typography variant='h6' sx={{ mb: 2}}>Go on an adventure lead by our innovation AI Dungeon Master using your very own character!</Typography>
+      <Typography variant='h6' sx={{ mb: 2}}>Go on an adventure lead by our innovation IntelliQuest using your very own character!</Typography>
       <Button variant="contained" to="/newCharacter" component={RemixLink}>START ADVENTURE</Button>
     </React.Fragment>
   );

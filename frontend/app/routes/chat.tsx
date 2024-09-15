@@ -112,7 +112,6 @@ export default function Chat() {
       setMessages((prevMessages) => [...prevMessages, { text: data.answer, sender: 'ai' }]);
     }
   };
-
   const handleSendMessage = () => {
     if (message.trim()) {
       setMessages((prevMessages) => [...prevMessages, { text: message, sender: 'user' }]);

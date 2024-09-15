@@ -43,14 +43,14 @@ app.post('/respond', async (req, res) => {
 
 // Used to store character data
 app.post('/storeCharacterData', async (req, res) => {
-    fs.writeFile("./character_sheets/currentUser.json", JSON.stringify(req.body), (error, result) => {
-      if (error) {
-        console.error("Unable to write Character Data.", error)
-        res.status(500).json({error: "Cannot store data!"});
-      } else {
-        res.status(200);
-      }
-    })
+  fs.writeFile("./character_sheets/currentUser.json", JSON.stringify(req.body), (error, result) => {
+    if (error) {
+      console.error("Unable to write Character Data.", error)
+      res.status(500).json({error: "Cannot store data!"});
+    } else {
+      res.status(200);
+    }
+  })
   
 });
 
