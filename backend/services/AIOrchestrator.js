@@ -98,6 +98,10 @@ async function submit_tool_outputs(input) {
           console.log("assistant > RollCharisma");
           return "<<ROLL CHARISMA>>";
           break;
+        case "RollConstitution":
+          console.log("assistant > RollConstitution");
+          return "<<ROLL CONSTITUTION>>";
+          break;
         default:
           console.log("assistant > Invalid Tool");
           break;
