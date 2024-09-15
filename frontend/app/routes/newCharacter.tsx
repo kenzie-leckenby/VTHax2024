@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link as RemixLink } from '@remix-run/react';
 import {
-  Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip
+  Box, Button, TextField, Typography, Container, FormControl, InputLabel, Select, MenuItem, Tooltip, Paper
 } from '@mui/material';
 
 type AbilityScores = {
@@ -26,12 +26,15 @@ type CharacterData = {
 export default function NewCharacter() {
   const [characterData, setCharacterData] = React.useState<CharacterData>({ name: '' });
   const [rollingAbilities, setRollingAbilities] = React.useState<AbilityScores | null>(null);
+  const [abilitiesRolled, setAbilitiesRolled] = React.useState(false);
   const [showAbilities, setShowAbilities] = React.useState(false);
   const [showRace, setShowRace] = React.useState(false);
   const [showClass, setShowClass] = React.useState(false);
   const [showSpell, setShowSpell] = React.useState(false);
   const [showHitPoints, setShowHitPoints] = React.useState(false);
+  const [hitPointsRolled, setHitPointsRolled] = React.useState(false);
   const [showGold, setShowGold] = React.useState(false);
+  const [goldRolled, setGoldRolled] = React.useState(false);
   const [races, setRaces] = React.useState<string[]>(['Human', 'Elf', 'Dwarf', 'Halfling']); // Example races
   const [classes, setClasses] = React.useState<string[]>(['Cleric', 'Fighter', 'Magic-User', 'Thief']); // Example classes
   const [spells, setSpells] = React.useState<string[]>(['Magic Missile', 'Fireball']); // Example spells
@@ -50,6 +53,7 @@ export default function NewCharacter() {
       CHA: rollDice(3, 6),
     };
     setRollingAbilities(newAbilities);
+    setAbilitiesRolled(true);
     setShowAbilities(true);
     setShowRace(true); // Show race dropdown after rolling abilities
   };
@@ -88,11 +92,13 @@ export default function NewCharacter() {
   const handleRollHitPoints = () => {
     const hitPoints = rollDice(1, 6) + 5; // Example rule: roll 1d6 + 5 for hit points
     setCharacterData(prev => ({ ...prev, hitPoints }));
+    setHitPointsRolled(true);
     setShowGold(true); // Show gold roll button after rolling hit points
   };
 
   const handleRollGold = () => {
     const gold = rollDice(3, 6) * 10; // Example rule: roll 3d6 * 10 for initial gold
+    setGoldRolled(true);
     setCharacterData(prev => ({ ...prev, gold }));
   };
 
@@ -119,130 +125,184 @@ export default function NewCharacter() {
 
   return (
     <Container>
-      <Typography variant="h4">Who are you?</Typography>
+      <Paper
+          elevation={3}
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto', // Ensure vertical scrolling
+            padding: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%', // Use full remaining height
+            maxHeight: '100%', // Ensure that overflow is handled
+          }}
+      >
+        <Typography variant="h4" sx={{marginBottom: '16px'}}>Who are you?</Typography>
       
-      <TextField
-        label="Name"
-        variant="outlined"
-        fullWidth
-        value={characterData.name}
-        onChange={handleNameChange}
-        sx={{ mb: 2 }}
-      />
+        <TextField
+          label="Name"
+          variant="outlined"
+          fullWidth
+          autoComplete="off"
+          value={characterData.name}
+          onChange={handleNameChange}
+          sx={{ mb: 2 }}
+        />
 
-      {characterData.name && (
-        <>
-          <Button variant="contained" onClick={handleRollAbilities}>
-            Roll Abilities
-          </Button>
+        {characterData.name && (
+          <>
+            {!abilitiesRolled && (
+              <Button variant="contained" onClick={handleRollAbilities}>
+                Roll Abilities
+              </Button>
+            )}
 
-          {showAbilities && rollingAbilities && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="h6">Abilities:</Typography>
-              {Object.entries(rollingAbilities).map(([ability, score]) => (
-                <Typography key={ability}>{ability}: {score}</Typography>
-              ))}
-            </Box>
-          )}
+            {showAbilities && rollingAbilities && (
+              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="h6">Abilities:</Typography>
+                  <Box sx={{ display: 'flex', gap: 2, ml: 2 }}>
+                    {Object.entries(rollingAbilities).map(([ability, score]) => (
+                      <Typography key={ability}>{ability}: {score}</Typography>
+                    ))}
+                  </Box>
+                </Box>
+                <Button
+                  variant="contained"
+                  onClick={handleRollAbilities}
+                  sx={{ 
+                    alignSelf: 'flex-start', // Aligns the button to the top of the container
+                    ml: 2 // Optional: margin to separate from abilities
+                  }}
+                >
+                  Roll Abilities
+                </Button>
+              </Box>
+            )}
 
-          {showRace && (
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Race</InputLabel>
-              <Select
-                value={characterData.race || ''}
-                onChange={handleRaceChange}
-                label="Race"
+            {showRace && (
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel>Race</InputLabel>
+                <Select
+                  value={characterData.race || ''}
+                  onChange={handleRaceChange}
+                  label="Race"
+                >
+                  {races.map(race => (
+                    <MenuItem
+                      key={race}
+                      value={race}
+                      disabled={
+                        (race === 'Dwarf' && dwarfDisabled) ||
+                        (race === 'Elf' && elfDisabled) ||
+                        (race === 'Halfling' && halflingDisabled)
+                      }
+                    >
+                      {race}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          
+            {showClass && (
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel>Class</InputLabel>
+                <Select
+                  value={characterData.class || ''}
+                  onChange={handleClassChange}
+                  label="Class"
+                >
+                  {classes.map(cls => (
+                    <MenuItem key={cls} value={cls}>
+                      {cls}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+
+            {showSpell && characterData.class === 'Magic-User' && (
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel>Spell</InputLabel>
+                <Select
+                  value={characterData.spell || ''}
+                  onChange={handleSpellChange}
+                  label="Spell"
+                >
+                  {spells.map(spell => (
+                    <MenuItem key={spell} value={spell}>
+                      {spell}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+
+            {showHitPoints && !hitPointsRolled &&(
+              <Button variant="contained" onClick={handleRollHitPoints} sx={{ mt: 2 }}>
+                Roll Hit Points
+              </Button>
+            )}
+
+            {characterData.hitPoints !== undefined && (
+              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="h6" sx={{ mt: 0 }}>
+                    Hit Points: {characterData.hitPoints}
+                  </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleRollHitPoints}
+                  sx={{ 
+                    alignSelf: 'center', // Aligns the button vertically center with the text
+                    ml: 2 
+                  }}
+                >
+                  Roll Hit Points
+                </Button>
+              </Box>
+            )}
+
+            {showGold && !goldRolled && (
+              <Button variant="contained" onClick={handleRollGold} sx={{ mt: 2 }}>
+                Roll Initial Gold
+              </Button>
+            )}
+
+            {characterData.gold !== undefined && (
+              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6" sx={{ mt: 0 }}>
+                  Initial Gold: {characterData.gold}
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleRollGold}
+                  sx={{ 
+                    alignSelf: 'center', // Aligns the button vertically center with the text
+                    ml: 2 
+                  }}
+                >
+                  Roll Gold
+                </Button>
+              </Box>
+            )}
+
+            {/* Save Button */}
+            {characterData.gold !== undefined && (
+              <Button
+                variant="contained"
+                color="primary"
+                to="/chat"
+                component={RemixLink}
+                onClick={handleSave}
+                sx={{ mt: 3 }}
               >
-                {races.map(race => (
-                  <MenuItem
-                    key={race}
-                    value={race}
-                    disabled={
-                      (race === 'Dwarf' && dwarfDisabled) ||
-                      (race === 'Elf' && elfDisabled) ||
-                      (race === 'Halfling' && halflingDisabled)
-                    }
-                  >
-                    {race}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        
-          {showClass && (
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Class</InputLabel>
-              <Select
-                value={characterData.class || ''}
-                onChange={handleClassChange}
-                label="Class"
-              >
-                {classes.map(cls => (
-                  <MenuItem key={cls} value={cls}>
-                    {cls}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {showSpell && characterData.class === 'Magic-User' && (
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Spell</InputLabel>
-              <Select
-                value={characterData.spell || ''}
-                onChange={handleSpellChange}
-                label="Spell"
-              >
-                {spells.map(spell => (
-                  <MenuItem key={spell} value={spell}>
-                    {spell}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          {showHitPoints && (
-            <Button variant="contained" onClick={handleRollHitPoints} sx={{ mt: 2 }}>
-              Roll Hit Points
-            </Button>
-          )}
-
-          {characterData.hitPoints !== undefined && (
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Hit Points: {characterData.hitPoints}
-            </Typography>
-          )}
-
-          {showGold && (
-            <Button variant="contained" onClick={handleRollGold} sx={{ mt: 2 }}>
-              Roll Initial Gold
-            </Button>
-          )}
-
-          {characterData.gold !== undefined && (
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Initial Gold: {characterData.gold}
-            </Typography>
-          )}
-
-          {/* Save Button */}
-          {characterData.gold !== undefined && (
-            <Button
-              variant="contained"
-              color="primary"
-              to="/chat"
-              component={RemixLink}
-              onClick={handleSave}
-              sx={{ mt: 3 }}
-            >
-              Save and Begin
-            </Button>
-          )}
-        </>
-      )}
+                Save and Begin
+              </Button>
+            )}
+          </>
+        )}
+      </Paper>
     </Container>
   );
 }
