@@ -124,7 +124,7 @@ export default function Chat() {
 
   const handleRollD20 = async () => {
     // Handle the Roll D20 button click
-    
+    setIsLoading(true);
     const value = Math.floor(Math.random() * 20) + 1 + getModifier(activeAbiity);;
     
     setMessages((prevMessages) => [...prevMessages, { text: "You Rolled: " + value.toString() , sender: 'ai' }]);
@@ -138,7 +138,7 @@ export default function Chat() {
     })
   
     const data = await res.json();
-
+    setIsLoading(false);
     setMessages((prevMessages) => [...prevMessages, { text: data.answer, sender: 'ai' }]);
     setIsD20Mode(false);
   };
